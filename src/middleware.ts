@@ -1,27 +1,31 @@
 import { defineMiddleware } from 'astro:middleware';
+import { getSession } from 'auth-astro/server';
 
 const notAuthenticatedRoutes = ['/login', '/register'];
 
 export const onRequest = defineMiddleware(
-  async ({ url, locals, redirect }, next) => {
-    const isLoggedIn = false;
+  async ({ url, locals, redirect, request }, next) => {
+    const session = await getSession(request);
+    const isLoggedIn = !!session;
+    const user = session?.user;
 
     // TODO:
     locals.isLoggedIn = isLoggedIn;
     locals.user = null;
+    locals.isAdmin = false;
 
-    if (locals.user) {
+    if (user) {
       // TODO:
-      // locals.user = {
-      //   avatar: user.photoURL ?? '',
-      //   email: user.email!,
-      //   name: user.displayName!,
-      //   emailVerified: user.emailVerified,
-      // };
+      locals.user = {
+        name: user.name!,
+        email: user.email!,
+      };
+
+      locals.isAdmin = user.role === 'admin';
     }
 
     // TODO: Eventualmente tenemos que controlar el acceso por roles
-    if (!isLoggedIn && url.pathname.startsWith('/dashboard')) {
+    if (!locals.isAdmin && url.pathname.startsWith('/dashboard')) {
       return redirect('/');
     }
 
