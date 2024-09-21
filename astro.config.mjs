@@ -8,9 +8,11 @@ import db from '@astrojs/db';
 
 import auth from 'auth-astro';
 
+import svelte from '@astrojs/svelte';
+
 // https://astro.build/config
 export default defineConfig({
-  integrations: [tailwind(), db(), auth()],
+  integrations: [tailwind(), db(), auth(), svelte()],
   output: 'server',
   adapter: netlify(),
 });

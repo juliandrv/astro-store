@@ -1,16 +1,22 @@
 ---
 import MainLayout from '@/layouts/MainLayout.astro';
-import {getSession} from 'auth-astro/server'
+import { actions } from 'astro:actions';
+import ProductList from '@/components/products/ProductList.svelte'
 
-const session = await getSession(Astro.request)
-const { user } = session ?? {}
+const {data, error} = await actions.getProductsByPage({})
+
+if(error) {
+  return Astro.redirect('/')
+}
+
+const {products, totalPages} = data
+
+console.log(products);
 ---
 
 <MainLayout>
-  <h1 class="text-3xl">Home Page</h1>
-  <pre>
-    <code>
-      {JSON.stringify(user)}
-    </code>
-  </pre>
+  <h1 class="text-3xl">Listado de Productos</h1>
+
+  <ProductList products={products} />
+
 </MainLayout>
