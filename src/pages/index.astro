@@ -2,6 +2,7 @@
 import MainLayout from '@/layouts/MainLayout.astro';
 import { actions } from 'astro:actions';
 import ProductList from '@/components/products/ProductList.svelte'
+import Pagination from '@/components/shared/Pagination.astro';
 
 const {data, error} = await actions.getProductsByPage({})
 
@@ -17,6 +18,8 @@ console.log(products);
 <MainLayout>
   <h1 class="text-3xl">Listado de Productos</h1>
 
-  <ProductList products={products} />
+  <ProductList products={products} client:load />
+
+  <Pagination {totalPages} />
 
 </MainLayout>

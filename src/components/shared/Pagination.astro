@@ -1,0 +1,29 @@
+---
+interface Props {
+  totalPages: number
+}
+
+const { totalPages } = Astro.props
+
+const url = Astro.url
+const pageParam = +(url.searchParams.get('page') ?? 1)
+
+const currentage = Math.max((pageParam > totalPages) ? totalPages : pageParam, 1)
+
+const path = url.pathname
+---
+
+<div class="flex justify-between items-center my-32">
+  <a class="button" href={`${path}?page=${Math.max(currentage - 1, 1)}`}>&LeftArrow; Anteriores</a>
+
+  <span>Página {pageParam} de {totalPages}</span>
+
+  <a class="button" href={`${path}?page=${Math.min(currentage + 1, totalPages)}`}>Siguientes &RightArrow;</a>
+
+</div>
+
+<style>
+  .button {
+    @apply p-2 bg-blue-500 text-white rounded;
+  }
+</style>
