@@ -15,7 +15,7 @@
   let currenImage = images[0];
 </script>
 
-<a href={`product/${product.slug}`}>
+<a href={`products/${product.slug}`}>
   <img
     on:mouseenter={() => (
       (currenImage = images[1] ?? images[0]), (hovered = true)

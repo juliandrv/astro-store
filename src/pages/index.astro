@@ -4,15 +4,20 @@ import { actions } from 'astro:actions';
 import ProductList from '@/components/products/ProductList.svelte'
 import Pagination from '@/components/shared/Pagination.astro';
 
-const {data, error} = await actions.getProductsByPage({})
+const searchParams = Astro.url.searchParams
+const pageParam = +(searchParams.get('page') ?? 1)
+
+const { data, error } = await actions.getProductsByPage({
+  page: pageParam
+})
 
 if(error) {
   return Astro.redirect('/')
 }
 
-const {products, totalPages} = data
 
-console.log(products);
+
+const {products, totalPages} = data
 ---
 
 <MainLayout>
