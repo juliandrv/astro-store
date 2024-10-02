@@ -27,6 +27,7 @@
     alt={product.title}
     class="h-[350px] object-contain transition-all"
     transition:fade={{ duration: 300 }}
+    loading="lazy"
   />
   <h4>{product.title}</h4>
   <p>${product.price}</p>

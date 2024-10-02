@@ -21,7 +21,7 @@ console.log(fullImages);
     <!-- Slides -->
     {fullImages.map(image => (
       <div class="swiper-slide">
-        <img src={image} alt='Product image' class="w-full h-full object-cover pr-20" />
+        <Image src={image} alt='Product' loading="eager" inferSize={true} class="w-full h-full object-cover pr-20" />
       </div>
 
     ))}

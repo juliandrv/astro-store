@@ -1,13 +1,13 @@
 import type { CartItem } from '@/interfaces';
 import Cookies from 'js-cookie';
 
-export class CartCookiesCLient {
+export class CartCookiesClient {
   static getCart(): CartItem[] {
     return JSON.parse(Cookies.get('cart') ?? '[]');
   }
 
   static addItem(cartItem: CartItem): CartItem[] {
-    const cart = CartCookiesCLient.getCart();
+    const cart = CartCookiesClient.getCart();
     const itemInCart = cart.find(
       (item) =>
         item.productId === cartItem.productId &&
@@ -26,7 +26,7 @@ export class CartCookiesCLient {
   }
 
   static removeItem(productId: string, size: string): CartItem[] {
-    const cart = CartCookiesCLient.getCart();
+    const cart = CartCookiesClient.getCart();
     const updatedCart = cart.filter(
       (item) => !(item.productId === productId && item.size === size)
     );
