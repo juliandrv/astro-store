@@ -20,6 +20,7 @@
     "auth-astro": "^4.1.2",
     "bcryptjs": "^2.4.3",
     "js-cookie": "^3.0.5",
+    "nanostores": "^0.11.3",
     "svelte": "^4.2.19",
     "sweetalert2": "^11.13.2",
     "swiper": "^11.1.14",

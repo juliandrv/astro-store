@@ -1,11 +1,21 @@
-<script lang="ts"></script>
+<script lang="ts">
+  import { itemsInCart } from '@/store';
+  import { CartCookiesClient } from '@/utils';
 
-<a href="/" class="relative inline-block">
-  <span
-    class="absolute -top-2 -right-2 flex justify-center items-center bg-blue-600 text-white text-xs rounded-full w-5 h-5"
-  >
-    3
-  </span>
+  $itemsInCart = itemsInCart.get();
+
+  const cart = CartCookiesClient.getCart();
+  itemsInCart.set(cart.length);
+</script>
+
+<a href="/cart" class="relative inline-block">
+  {#if $itemsInCart > 0}
+    <span
+      class="absolute -top-2 -right-2 flex justify-center items-center bg-blue-600 text-white text-xs rounded-full w-5 h-5"
+    >
+      {$itemsInCart}
+    </span>
+  {/if}
 
   <svg
     xmlns="http://www.w3.org/2000/svg"

@@ -23,7 +23,7 @@ const { product, images } = data
   <!-- <h1>{product.title}</h1> -->
 
   <div class="grid grid-cols-1 md:grid-cols-3 w-full gap-2">
-    <ProductSlideshow images={images} />
+    <ProductSlideshow images={images}  />
 
     <section>
       <h1 class="font-bold">{product.title}</h1>
@@ -58,51 +58,64 @@ const { product, images } = data
 </MainLayout>
 
 <script>
-import { CartCookiesClient } from "@/utils"
+  import { itemsInCart } from "@/store"
+  import { CartCookiesClient } from "@/utils"
+  import { navigate } from "astro:transitions/client"
 
-  const sizeElements = document.querySelectorAll('li')
-  sizeElements.forEach(size => {
-    size.addEventListener('click', () => {
-      sizeElements.forEach(el => el.classList.remove('selected-size'))
-      size.classList.add('selected-size')
+  document.addEventListener('astro:page-load', () => {
+    const sizeElements = document.querySelectorAll('li')
+
+    sizeElements.forEach(size => {
+      size.addEventListener('click', () => {
+        sizeElements.forEach(el => el.classList.remove('selected-size'))
+        size.classList.add('selected-size')
+      })
+    })
+
+    const quantityInput = document.querySelector('input') as HTMLInputElement
+    const productIdInput = document.querySelector('#product-id') as HTMLInputElement
+
+    let quantity = 1
+
+    const [decrementButton, incrementButton, addToCartButton] = document.querySelectorAll('button')
+
+    if (!decrementButton || !quantityInput) return
+
+    decrementButton.addEventListener('click', () => {
+      quantity = Math.max(quantity - 1 , 1)
+      quantityInput.value = quantity.toString()
+    })
+
+    incrementButton.addEventListener('click', () => {
+      quantity = Math.min(quantity + 1 , 5)
+      quantityInput.value = quantity.toString()
+    })
+
+    addToCartButton.addEventListener('click', async () => {
+      const size = document.querySelector('.selected-size')?.textContent
+
+      if(!size) {
+        return alert('Seleccione una talla')
+      }
+
+      // addToCartButton.disabled = true
+
+      const cart = CartCookiesClient.addItem({
+        productId: productIdInput.value,
+        size: size,
+        quantity: quantity
+      })
+
+      itemsInCart.set(cart.length)
+      console.log(itemsInCart.get());
+
+
+      // TODO: cambiar luego cuando tengamos los viewTransitions
+      // window.location.href = '/cart'
+      await navigate('/cart')
     })
   })
 
-  const quantityInput = document.querySelector('input') as HTMLInputElement
-  const productIdInput = document.querySelector('#product-id') as HTMLInputElement
-
-  let quantity = 1
-
-  const [decrementButton, incrementButton, addToCartButton] = document.querySelectorAll('button')
-
-  decrementButton.addEventListener('click', () => {
-    quantity = Math.max(quantity - 1 , 1)
-    quantityInput.value = quantity.toString()
-  })
-
-  incrementButton.addEventListener('click', () => {
-    quantity = Math.min(quantity + 1 , 5)
-    quantityInput.value = quantity.toString()
-  })
-
-  addToCartButton.addEventListener('click', () => {
-    const size = document.querySelector('.selected-size')?.textContent
-
-    if(!size) {
-      return alert('Seleccione una talla')
-    }
-
-    // addToCartButton.disabled = true
-
-    CartCookiesClient.addItem({
-      productId: productIdInput.value,
-      size: size,
-      quantity: quantity
-    })
-
-    // TODO: cambiar luego cuando tengamos los viewTransitions
-    window.location.href = '/cart'
-  })
 </script>
 
 
