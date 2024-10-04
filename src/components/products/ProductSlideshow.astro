@@ -10,7 +10,6 @@ const { images } = Astro.props
 const fullImages = images.map(image => {
   return image.startsWith('http') ? image : `${import.meta.env.PUBLIC_URL}/images/products/${image}`
 })
-console.log(fullImages);
 
 ---
 

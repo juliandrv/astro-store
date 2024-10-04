@@ -10,24 +10,24 @@ export default async function seed() {
     { id: 'user', name: 'User' },
   ];
 
-  const diana = {
-    id: UUID(),
-    name: 'Diana',
-    email: 'diana@example.com',
+  const admin = {
+    id: 'ABC123admin!', // UUID()
+    name: 'Admin',
+    email: 'admin@example.com',
     password: bcrypt.hashSync('123456'),
     role: 'admin',
   };
 
-  const naty = {
-    id: UUID(),
-    name: 'Naty',
-    email: 'naty@example.com',
+  const diana = {
+    id: 'ABC123diana!', // UUID()
+    name: 'Diana',
+    email: 'diana@example.com',
     password: bcrypt.hashSync('123456'),
     role: 'user',
   };
 
   await db.insert(Role).values(roles);
-  await db.insert(User).values([diana, naty]);
+  await db.insert(User).values([admin, diana]);
 
   const queries: any = [];
 

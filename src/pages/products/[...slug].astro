@@ -107,11 +107,7 @@ const { product, images } = data
       })
 
       itemsInCart.set(cart.length)
-      console.log(itemsInCart.get());
 
-
-      // TODO: cambiar luego cuando tengamos los viewTransitions
-      // window.location.href = '/cart'
       await navigate('/cart')
     })
   })
