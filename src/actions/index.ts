@@ -2,6 +2,7 @@ import { loginUser, logout, registerUser } from './auth';
 import { getProductsByPage } from './products/get-products-by-page.action';
 import { getProductBySlug } from './products/get-product-by-slug.action';
 import { loadProductsFromCart } from './cart/load-products-from-cart.action';
+import { createUpdateProduct } from './products/create-update-product.action';
 
 export const server = {
   // actions
@@ -17,4 +18,8 @@ export const server = {
 
   // Cart
   loadProductsFromCart,
+
+  // Admin
+  // Product
+  createUpdateProduct,
 };
