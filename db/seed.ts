@@ -43,7 +43,7 @@ export default async function seed() {
       tags: p.tags.join(','),
       title: p.title,
       gender: p.gender,
-      user: diana.id,
+      user: admin.id,
     };
 
     queries.push(db.insert(Product).values(product));

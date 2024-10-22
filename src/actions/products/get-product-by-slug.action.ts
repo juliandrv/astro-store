@@ -2,10 +2,8 @@ import { defineAction } from 'astro:actions';
 import { db, eq, Product, ProductImage } from 'astro:db';
 import { z } from 'astro:schema';
 
-import { v4 as UUID } from 'uuid';
-
 const newProduct = {
-  id: UUID(),
+  id: '',
   description: 'Nueva descripción',
   gender: 'men',
   price: 10,

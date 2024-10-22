@@ -1,6 +1,6 @@
 import { ImageUpload } from '@/utils/image-upload';
 import { defineAction } from 'astro:actions';
-import { db, eq, Product } from 'astro:db';
+import { db, eq, Product, ProductImage } from 'astro:db';
 import { z } from 'astro:schema';
 import { getSession } from 'auth-astro/server';
 
@@ -59,22 +59,46 @@ export const createUpdateProduct = defineAction({
       ...rest,
     };
 
+    const queries: any = [];
+
     if (!form.id) {
-      await db.insert(Product).values(product);
+      queries.push(db.insert(Product).values(product));
     } else {
-      await db.update(Product).set(product).where(eq(Product.id, id));
+      queries.push(
+        db.update(Product).set(product).where(eq(Product.id, id))
+      );
     }
 
-    await db.update(Product).set(product).where(eq(Product.id, id));
+    // Imágenes
+    const secureUrls: string[] = [];
+    if (
+      form.imageFiles &&
+      form.imageFiles.length > 0 &&
+      form.imageFiles[0].size > 0
+    ) {
+      const urls = await Promise.all(
+        form.imageFiles.map((file) => ImageUpload.upload(file))
+      );
 
-    // Imagenes
-    console.log('imageFiles', imageFiles);
-    imageFiles?.forEach(async (imageFile) => {
-      if (imageFile.size <= 0) return;
+      secureUrls.push(...urls);
+    }
 
-      const url = await ImageUpload.upload(imageFile);
-      console.log(url);
+    secureUrls.forEach((imageUrl) => {
+      const imageObj = {
+        id: UUID(),
+        image: imageUrl,
+        productId: product.id,
+      };
+      queries.push(db.insert(ProductImage).values(imageObj));
     });
+
+    // imageFiles?.forEach(async (imageFile) => {
+    //   if (imageFile.size <= 0) return;
+
+    //   const url = await ImageUpload.upload(imageFile);
+    // });
+
+    await db.batch(queries);
 
     return product;
   },

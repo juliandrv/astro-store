@@ -8,17 +8,33 @@ cloudinary.config({
 });
 
 export class ImageUpload {
-  static async upload(image: File) {
-    const buffer = await image.arrayBuffer();
-    const base64Image = Buffer.from(buffer).toString('base64');
-    const imageType = image.type.split('/')[1];
+  static async upload(file: File) {
+    try {
+      const buffer = await file.arrayBuffer();
+      const base64Image = Buffer.from(buffer).toString('base64');
+      const imageType = file.type.split('/')[1]; // image/png
 
-    const resp = await cloudinary.uploader.upload(
-      `data:image/${imageType};base64,${base64Image}`
-    );
+      const resp = await cloudinary.uploader.upload(
+        `data:image/${imageType};base64,${base64Image}`
+      );
 
-    console.log(resp);
+      return resp.secure_url;
+    } catch (error) {
+      console.log(error);
+      throw new Error(JSON.stringify(error));
+    }
+  }
 
-    return '';
+  static async delete(image: string) {
+    try {
+      const imageName = image.split('/').pop() ?? '';
+      const imageId = imageName.split('.')[0];
+      const resp = await cloudinary.uploader.destroy(imageId);
+      console.log(resp);
+      return true;
+    } catch (error) {
+      console.log(error);
+      return false;
+    }
   }
 }
