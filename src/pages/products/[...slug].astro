@@ -1,36 +1,33 @@
 ---
-import { actions } from "astro:actions";
+import { actions } from 'astro:actions';
 
-import MainLayout from "@/layouts/MainLayout.astro";
-import ProductSlideshow from "@/components/products/ProductSlideshow.astro";
+import MainLayout from '@/layouts/MainLayout.astro';
+import ProductSlideshow from '@/components/products/ProductSlideshow.astro';
 
-const { slug } = Astro.params
+const { slug } = Astro.params;
 
-const { data, error } = await actions.getProductBySlug(slug ?? '')
+const { data, error } = await actions.getProductBySlug(slug ?? '');
 
-if(error) {
-  return Astro.redirect('/404')
+if (error) {
+  return Astro.redirect('/404');
 }
 
-const { product, images } = data
+const { product, images } = data;
 ---
 
-<MainLayout
-  title={product.title}
-  description={product.description}
-  >
+<MainLayout title={product.title} description={product.description}>
   <!-- image={image} -->
   <!-- <h1>{product.title}</h1> -->
 
-  <div class="grid grid-cols-1 md:grid-cols-3 w-full gap-2">
-    <ProductSlideshow images={images}  />
+  <div class='grid grid-cols-1 md:grid-cols-3 w-full gap-2'>
+    <ProductSlideshow images={images.map((i) => i.image)} />
 
     <section>
-      <h1 class="font-bold">{product.title}</h1>
-      <h2 class="font-bold">${product.price}</h2>
+      <h1 class='font-bold'>{product.title}</h1>
+      <h2 class='font-bold'>${product.price}</h2>
 
-      <h3 class="mt-5">Tallas</h3>
-      <ul class="flex gap-3">
+      <h3 class='mt-5'>Tallas</h3>
+      <ul class='flex gap-3'>
         {
           product.sizes
             .split(',')
@@ -38,64 +35,73 @@ const { product, images } = data
         }
       </ul>
 
-      <h3 class="mt-5">Cantidad</h3>
+      <h3 class='mt-5'>Cantidad</h3>
       <div>
-        <button class="btn-quantity">-</button>
-        <input type="number" min="1" value="1" />
-        <button class="btn-quantity">+</button>
+        <button class='btn-quantity'>-</button>
+        <input type='number' min='1' value='1' />
+        <button class='btn-quantity'>+</button>
       </div>
 
-      <button class="mt-5 disabled:bg-blue-300 bg-blue-500 text-white p-3 w-full"
+      <button
+        class='mt-5 disabled:bg-blue-300 bg-blue-500 text-white p-3 w-full'
         >Añadir al carrito</button
       >
 
-      <h3 class="mt-10">Descripción</h3>
+      <h3 class='mt-10'>Descripción</h3>
       <p>{product.description}</p>
     </section>
   </div>
 
-  <input type="hidden" id="product-id" value={product.id} />
+  <input type='hidden' id='product-id' value={product.id} />
 </MainLayout>
 
 <script>
-  import { itemsInCart } from "@/store"
-  import { CartCookiesClient } from "@/utils"
-  import { navigate } from "astro:transitions/client"
+  import { itemsInCart } from '@/store';
+  import { CartCookiesClient } from '@/utils';
+  import { navigate } from 'astro:transitions/client';
 
   document.addEventListener('astro:page-load', () => {
-    const sizeElements = document.querySelectorAll('li')
+    const sizeElements = document.querySelectorAll('li');
 
-    sizeElements.forEach(size => {
+    sizeElements.forEach((size) => {
       size.addEventListener('click', () => {
-        sizeElements.forEach(el => el.classList.remove('selected-size'))
-        size.classList.add('selected-size')
-      })
-    })
+        sizeElements.forEach((el) =>
+          el.classList.remove('selected-size')
+        );
+        size.classList.add('selected-size');
+      });
+    });
 
-    const quantityInput = document.querySelector('input') as HTMLInputElement
-    const productIdInput = document.querySelector('#product-id') as HTMLInputElement
+    const quantityInput = document.querySelector(
+      'input'
+    ) as HTMLInputElement;
+    const productIdInput = document.querySelector(
+      '#product-id'
+    ) as HTMLInputElement;
 
-    let quantity = 1
+    let quantity = 1;
 
-    const [decrementButton, incrementButton, addToCartButton] = document.querySelectorAll('button')
+    const [decrementButton, incrementButton, addToCartButton] =
+      document.querySelectorAll('button');
 
-    if (!decrementButton || !quantityInput) return
+    if (!decrementButton || !quantityInput) return;
 
     decrementButton.addEventListener('click', () => {
-      quantity = Math.max(quantity - 1 , 1)
-      quantityInput.value = quantity.toString()
-    })
+      quantity = Math.max(quantity - 1, 1);
+      quantityInput.value = quantity.toString();
+    });
 
     incrementButton.addEventListener('click', () => {
-      quantity = Math.min(quantity + 1 , 5)
-      quantityInput.value = quantity.toString()
-    })
+      quantity = Math.min(quantity + 1, 5);
+      quantityInput.value = quantity.toString();
+    });
 
     addToCartButton.addEventListener('click', async () => {
-      const size = document.querySelector('.selected-size')?.textContent
+      const size =
+        document.querySelector('.selected-size')?.textContent;
 
-      if(!size) {
-        return alert('Seleccione una talla')
+      if (!size) {
+        return alert('Seleccione una talla');
       }
 
       // addToCartButton.disabled = true
@@ -103,17 +109,15 @@ const { product, images } = data
       const cart = CartCookiesClient.addItem({
         productId: productIdInput.value,
         size: size,
-        quantity: quantity
-      })
+        quantity: quantity,
+      });
 
-      itemsInCart.set(cart.length)
+      itemsInCart.set(cart.length);
 
-      await navigate('/cart')
-    })
-  })
-
+      await navigate('/cart');
+    });
+  });
 </script>
-
 
 <style>
   h3 {
